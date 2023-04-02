@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Container from './Container';
+import List from './List';
+import Selector from './Selector';
+const request = require('browser-request');
 
-function App() {
+const App = () => {
+  const [selectedList, setSelectedList] = useState(null);
+
+  const equipments = [
+    { label: 'Audio Production', items: ['Microphones', 'Field Recorder', 'Headphone Splitters'] },
+    { label: 'Camera', items: ['Digital Cinema', 'Camcorder', 'Action Camera'] },
+    { label: 'Lighting', items: ['fluorescent', 'LED', 'Reflector'] },
+  ];
+
+  const handleSelect = (option) => {
+    setSelectedList(option);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Selector options={ equipments } onSelect={ handleSelect } />
+      { selectedList && <List items={ selectedList.items } /> }
+    <Container/>
   );
-}
+  request('https://api.publicapis.org/entries', function(er, response) {
+      if (!er) return console.log(response.body);
+      console.log('There was an error, but at least browser-request loaded and ran!');
+      throw er;
+    });
+
+};
 
 export default App;
